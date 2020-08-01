@@ -1,12 +1,14 @@
+import 'dart:math';
+import 'dart:typed_data';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:nearby_connections/nearby_connections.dart';
 import 'package:overlay_support/overlay_support.dart';
 
-import 'utils/nearby.dart';
-import 'utils/firebase.dart';
 import 'utils/constants.dart';
 import 'views/home/home.dart';
 import './models/dam.dart';
@@ -41,7 +43,9 @@ class SIHNotifier extends StatefulWidget {
 
 class _SIHNotifierState extends State<SIHNotifier> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  GlobalKey<ScaffoldState> scaffoldState = new GlobalKey<ScaffoldState>();
+  final String userID = Random().nextInt(10000).toString();
+  final Strategy strategy = Strategy.P2P_CLUSTER;
+  Box peers = Hive.box('peers');
 
   static Future<dynamic> backgroundMessageHandler(
       Map<String, dynamic> message) async {
@@ -55,8 +59,93 @@ class _SIHNotifierState extends State<SIHNotifier> {
     );
   }
 
+  void startAdvertising() async {
+    try {
+      bool adv = await Nearby().startAdvertising(
+        userID,
+        strategy,
+        onConnectionInitiated: (id, info) async {
+          acceptConnection(id);
+        },
+        onConnectionResult: (id, status) {
+          print(status);
+          if (status == Status.CONNECTED) {
+            print('$userID: Connected to $id');
+            peers.put(id, id);
+          }
+        },
+        onDisconnected: (id) {
+          peers.delete(id);
+          print('$userID: Disconnected from $id');
+        },
+      );
+      print('ADVERTISING ${adv.toString()}');
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void startDiscovery() async {
+    try {
+      bool dis = await Nearby().startDiscovery(userID, strategy,
+          onEndpointFound: (id, name, serviceId) async {
+        print(id);
+        Nearby().requestConnection(
+          userID,
+          id,
+          onConnectionInitiated: (id, info) async {
+            acceptConnection(id);
+          },
+          onConnectionResult: (id, status) {
+            print(status);
+            if (status == Status.CONNECTED) {
+              peers.put(id, id);
+              print('$userID: Connected to $id');
+            }
+          },
+          onDisconnected: (id) {
+            peers.delete(id);
+            print('$userID: Disconnected to $id');
+          },
+        );
+      }, onEndpointLost: (id) {
+        print("Lost: " + id);
+      });
+      print('DISCOVERING: ${dis.toString()}');
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void acceptConnection(id) async {
+    Nearby().acceptConnection(
+      id,
+      onPayLoadRecieved: (endid, payload) async {
+        String str = String.fromCharCodes(payload.bytes);
+        if (str == 'WARNING') {
+          showSimpleNotification(
+            Text('WARNING'),
+            background: kRed,
+            contentPadding: EdgeInsets.all(5),
+            elevation: 5,
+            subtitle: Text('Possible flood in your area'),
+          );
+        }
+      },
+    );
+  }
+
+  void _sendData() async {
+    String warning = 'WARNING';
+    for (var peer in peers.values) {
+      Nearby().sendBytesPayload(peer, Uint8List.fromList(warning.codeUnits));
+    }
+  }
+
   @override
   void initState() {
+    Nearby().askLocationAndExternalStoragePermission();
+    startAdvertising();
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: " + message.toString());
@@ -67,6 +156,7 @@ class _SIHNotifierState extends State<SIHNotifier> {
           elevation: 5,
           subtitle: Text(message['notification']['body']),
         );
+        _sendData();
       },
       onBackgroundMessage: backgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
@@ -78,6 +168,7 @@ class _SIHNotifierState extends State<SIHNotifier> {
           elevation: 5,
           subtitle: Text(message['notification']['body']),
         );
+        _sendData();
       },
       onResume: (Map<String, dynamic> message) async {
         print("onResume: " + message.toString());
@@ -88,6 +179,7 @@ class _SIHNotifierState extends State<SIHNotifier> {
           elevation: 5,
           subtitle: Text(message['notification']['body']),
         );
+        _sendData();
       },
     );
     _firebaseMessaging.requestNotificationPermissions(
@@ -107,6 +199,7 @@ class _SIHNotifierState extends State<SIHNotifier> {
       print(token);
       Hive.box('user').put('fcmToken', token);
     });
+    startDiscovery();
     super.initState();
   }
 
