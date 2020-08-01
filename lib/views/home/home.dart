@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
@@ -13,10 +14,12 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   List<ChartCard> damCharts = [];
 
   @override
   void initState() {
+    _firebaseMessaging.subscribeToTopic('iot');
     _buildDamCharts();
     super.initState();
   }

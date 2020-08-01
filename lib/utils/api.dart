@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
 
@@ -53,8 +52,8 @@ class ApiBaseHelper {
     try {
       final response = await baseAPI.post(url, data: data);
       resData = _returnResponse(response);
-    } on SocketException {
-      throw Exception('No Internet connection');
+    } on DioError catch (e) {
+      print(e.message);
     }
     return resData;
   }
@@ -64,8 +63,8 @@ class ApiBaseHelper {
     try {
       final response = await baseAPI.put(url, data: data);
       resData = _returnResponse(response);
-    } on SocketException {
-      throw Exception('No Internet connection');
+    } on DioError catch (e) {
+      print(e.message);
     }
     return resData;
   }
@@ -75,8 +74,8 @@ class ApiBaseHelper {
     try {
       final response = await baseAPI.delete(url);
       resData = _returnResponse(response);
-    } on SocketException {
-      throw Exception('No Internet connection');
+    } on DioError catch (e) {
+      print(e.message);
     }
     return resData;
   }
