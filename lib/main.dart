@@ -45,14 +45,14 @@ class _SIHNotifierState extends State<SIHNotifier> {
 
   static Future<dynamic> backgroundMessageHandler(
       Map<String, dynamic> message) async {
-    if (message.containsKey('data')) {
-      final dynamic data = message['data'];
-      print(data);
-    }
-    if (message.containsKey('notification')) {
-      final dynamic notification = message['notification'];
-      print(notification);
-    }
+    print(message.toString());
+    showSimpleNotification(
+      Text(message['notification']['title']),
+      background: kRed,
+      contentPadding: EdgeInsets.all(5),
+      elevation: 5,
+      subtitle: Text(message['notification']['body']),
+    );
   }
 
   @override
@@ -61,68 +61,32 @@ class _SIHNotifierState extends State<SIHNotifier> {
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: " + message.toString());
         showSimpleNotification(
-          Text(message['notification']['body']),
-          background: kBlue,
-        );
-        await showDialog(
-          context: scaffoldState.currentContext,
-          builder: (context) => AlertDialog(
-            content: ListTile(
-              title: Text(message['notification']['title']),
-              subtitle: Text(message['notification']['body']),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Ok'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
+          Text(message['notification']['title']),
+          background: kRed,
+          contentPadding: EdgeInsets.all(5),
+          elevation: 5,
+          subtitle: Text(message['notification']['body']),
         );
       },
       onBackgroundMessage: backgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: " + message.toString());
         showSimpleNotification(
-          Text(message['notification']['body']),
-          background: kBlue,
-        );
-        await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            content: ListTile(
-              title: Text(message['notification']['title']),
-              subtitle: Text(message['notification']['body']),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Ok'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
+          Text(message['notification']['title']),
+          background: kRed,
+          contentPadding: EdgeInsets.all(5),
+          elevation: 5,
+          subtitle: Text(message['notification']['body']),
         );
       },
       onResume: (Map<String, dynamic> message) async {
         print("onResume: " + message.toString());
         showSimpleNotification(
-          Text(message['notification']['body']),
-          background: kBlue,
-        );
-        await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            content: ListTile(
-              title: Text(message['notification']['title']),
-              subtitle: Text(message['notification']['body']),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Ok'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
+          Text(message['notification']['title']),
+          background: kRed,
+          contentPadding: EdgeInsets.all(5),
+          elevation: 5,
+          subtitle: Text(message['notification']['body']),
         );
       },
     );
