@@ -41,7 +41,7 @@ class ApiBaseHelper {
       final response = await baseAPI.get(url);
       resData = _returnResponse(response);
     } on DioError catch (e) {
-      print(e.message);
+      print(e);
     }
     return resData;
   }
@@ -53,7 +53,7 @@ class ApiBaseHelper {
       final response = await baseAPI.post(url, data: data);
       resData = _returnResponse(response);
     } on DioError catch (e) {
-      print(e.message);
+      print(e);
     }
     return resData;
   }
@@ -64,7 +64,7 @@ class ApiBaseHelper {
       final response = await baseAPI.put(url, data: data);
       resData = _returnResponse(response);
     } on DioError catch (e) {
-      print(e.message);
+      print(e);
     }
     return resData;
   }
@@ -75,7 +75,7 @@ class ApiBaseHelper {
       final response = await baseAPI.delete(url);
       resData = _returnResponse(response);
     } on DioError catch (e) {
-      print(e.message);
+      print(e);
     }
     return resData;
   }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_pusher/pusher.dart';
 import 'package:getwidget/getwidget.dart';
@@ -17,21 +19,19 @@ class IOTChart extends StatefulWidget {
 }
 
 class _IOTChartState extends State<IOTChart> {
+  IOTValues iotValues;
   List<charts.Series<ValueIOT, DateTime>> _chartData;
   IOTPusher iotPusher = new IOTPusher();
 
   @override
-  void dispose() {
+  void dispose() async {
+    await Pusher.unsubscribe('iot');
     super.dispose();
   }
 
-  Future<void> initChart() async {
-    Channel channel = await iotPusher.initPusher();
-    channel.bind('iot', (data) {
-      print(data);
-    });
-    IOTValues iotValues = await iotPusher.fetchIOTInfo();
-    List<ValueIOT> waterData = iotValues.getWaterValues;
+  Future<Channel> initChart() async {
+    this.iotValues = await iotPusher.fetchIOTInfo();
+    List<ValueIOT> waterData = this.iotValues.getWaterValues;
     var initial = [
       charts.Series<ValueIOT, DateTime>(
         id: 'Current',
@@ -44,12 +44,40 @@ class _IOTChartState extends State<IOTChart> {
     setState(() {
       _chartData = initial;
     });
+    Channel channel = await iotPusher.initPusher();
+    return channel;
   }
 
   @override
   void initState() {
     super.initState();
-    initChart();
+    initChart().then((channel) async {
+      if (mounted) {
+        await channel.bind('updated', (data) async {
+          print(data.event);
+          var value = json.decode(data.data)['message'];
+          var newVal = ValueIOT(
+            value: value['water_level'],
+            time: DateTime.parse(value['created_at']),
+          );
+          List<ValueIOT> waterData = this.iotValues.getWaterValues;
+          waterData.add(newVal);
+          var newChartData = [
+            charts.Series<ValueIOT, DateTime>(
+              id: 'Current',
+              colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+              domainFn: (ValueIOT point, _) => point.getTime,
+              measureFn: (ValueIOT point, _) => point.getValues,
+              data: waterData,
+            ),
+          ];
+          setState(() {
+            _chartData = newChartData;
+          });
+        });
+      }
+      print('init complete');
+    });
   }
 
   @override
@@ -100,7 +128,7 @@ class _IOTChartState extends State<IOTChart> {
                     ],
                     animate: true,
                     primaryMeasureAxis: charts.NumericAxisSpec(
-                      viewport: charts.NumericExtents(0, 25),
+                      viewport: charts.NumericExtents(0, 22),
                       renderSpec: charts.GridlineRendererSpec(
                         // Tick and Label styling here.
                         labelStyle: charts.TextStyleSpec(
@@ -118,7 +146,7 @@ class _IOTChartState extends State<IOTChart> {
                           charts.DayTickProviderSpec(increments: [2]),
                       viewport: charts.DateTimeExtents(
                         start: DateTime.now().subtract(
-                          Duration(hours: 2),
+                          Duration(minutes: 3),
                         ),
                         end: DateTime.now().add(
                           Duration(minutes: 1),

@@ -14,8 +14,9 @@ class IOTPusher {
         PusherOptions(
           cluster: "ap2",
         ),
-        enableLogging: true,
+        enableLogging: false,
       );
+      await Pusher.connect();
       Channel channel = await Pusher.subscribe('iot');
       return channel;
     } catch (e) {

@@ -64,17 +64,22 @@ class _SIHNotifierState extends State<SIHNotifier> {
         userID,
         strategy,
         onConnectionInitiated: (id, info) async {
-          acceptConnection(id);
+          try {
+            acceptConnection(id);
+          } catch (e) {
+            print(e);
+          }
         },
         onConnectionResult: (id, status) {
-          print(status);
           if (status == Status.CONNECTED) {
             print('$userID: Connected to $id');
             peers.put(id, id);
+            toast('Connected to $id');
           }
         },
         onDisconnected: (id) {
           peers.delete(id);
+          toast('Disconnected from $id');
           print('$userID: Disconnected from $id');
         },
       );
@@ -88,28 +93,33 @@ class _SIHNotifierState extends State<SIHNotifier> {
     try {
       bool dis = await Nearby().startDiscovery(userID, strategy,
           onEndpointFound: (id, name, serviceId) async {
-        print(id);
         Nearby().requestConnection(
           userID,
           id,
           onConnectionInitiated: (id, info) async {
-            acceptConnection(id);
+            try {
+              acceptConnection(id);
+            } catch (e) {
+              print(e);
+            }
           },
           onConnectionResult: (id, status) {
-            print(status);
             if (status == Status.CONNECTED) {
               peers.put(id, id);
               print('$userID: Connected to $id');
+              toast('Connected to $id');
               Nearby().stopDiscovery();
             }
           },
           onDisconnected: (id) {
             peers.delete(id);
-            print('$userID: Disconnected to $id');
+            toast('Disconnected from $id');
+            print('$userID: Disconnected from $id');
           },
         );
       }, onEndpointLost: (id) {
         print("Lost: " + id);
+        toast('$id out of range');
       });
       print('DISCOVERING: ${dis.toString()}');
     } catch (e) {
@@ -134,9 +144,13 @@ class _SIHNotifierState extends State<SIHNotifier> {
   }
 
   void _sendData() async {
-    String warning = 'NEARBY WARNING';
-    for (var peer in peers.values) {
-      Nearby().sendBytesPayload(peer, Uint8List.fromList(warning.codeUnits));
+    try {
+      String warning = 'NEARBY WARNING';
+      for (var peer in peers.values) {
+        Nearby().sendBytesPayload(peer, Uint8List.fromList(warning.codeUnits));
+      }
+    } catch (e) {
+      print(e);
     }
   }
 

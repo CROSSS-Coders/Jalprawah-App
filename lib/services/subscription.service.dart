@@ -40,6 +40,7 @@ class SubscriptionService {
         'pu': 'true'
       });
       Response response = await api.post('/login/create/subscribe', formData);
+      print(response);
       var data = response.data;
       DamInfo dam = damInfoList.where((x) => x.getDamID == damID).toList()[0];
       Hive.box('notification_dams').put(
