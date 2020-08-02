@@ -223,6 +223,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.7.5"
+  flutter_pusher:
+    dependency: "direct main"
+    description:
+      name: flutter_pusher
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   getwidget:
     dependency: "direct main"
     description:
@@ -370,6 +377,16 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.1"
+<<<<<<< HEAD
+=======
+  overlay_support:
+    dependency: "direct main"
+    description:
+      name: overlay_support
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.5"
+>>>>>>> d11398eb6b0e53dd69d06a294103fd692515a427
   package_config:
     dependency: transitive
     description:

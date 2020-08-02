@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import '../../models/dam.dart';
+
 import '../../components/general/index.dart';
 import '../../components/home/index.dart';
 import '../../views/home/index.dart';
@@ -60,6 +61,11 @@ class _IoTState extends State<IoT> {
                 },
               ),
             ),
+                // child: ChartCard(
+                //   damData: null,
+                //   showButton: false,
+                // ),
+                ),
           ],
         ),
       ),

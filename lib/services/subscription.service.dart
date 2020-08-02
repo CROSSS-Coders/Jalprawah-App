@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:hive/hive.dart';
 
 import '../utils/api.dart';
@@ -7,6 +8,7 @@ import '../models/index.dart';
 
 class SubscriptionService {
   ApiBaseHelper api = new ApiBaseHelper();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   Future<bool> updateSubscription(
       email, saveDams, deleteDams, damInfoList) async {
@@ -24,6 +26,10 @@ class SubscriptionService {
         '/login/subscibe/${hiveResults['id']}/delete',
       );
       Hive.box('notification_dams').delete(damID);
+<<<<<<< HEAD
+=======
+      _firebaseMessaging.unsubscribeFromTopic(damID.toString());
+>>>>>>> d11398eb6b0e53dd69d06a294103fd692515a427
     }
     return true;
   }
@@ -47,6 +53,10 @@ class SubscriptionService {
           'id': data['subscribe']['id'],
         },
       );
+<<<<<<< HEAD
+=======
+      _firebaseMessaging.subscribeToTopic(damID.toString());
+>>>>>>> d11398eb6b0e53dd69d06a294103fd692515a427
     }
     return true;
   }

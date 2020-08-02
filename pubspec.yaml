@@ -17,6 +17,8 @@ dependencies:
   firebase_messaging: ^6.0.16
   nearby_connections: 1.1.1+1
   pin_code_fields: ^4.0.0
+  flutter_pusher: ^1.0.2
+  overlay_support: ^1.0.5
 
 dev_dependencies:
   hive_generator: ^0.7.0+2

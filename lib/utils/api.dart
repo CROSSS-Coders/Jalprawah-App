@@ -41,8 +41,13 @@ class ApiBaseHelper {
     try {
       final response = await baseAPI.get(url);
       resData = _returnResponse(response);
+<<<<<<< HEAD
     } on SocketException {
       throw Exception('No Internet connection');
+=======
+    } on DioError catch (e) {
+      print(e.message);
+>>>>>>> d11398eb6b0e53dd69d06a294103fd692515a427
     }
     return resData;
   }
@@ -53,8 +58,13 @@ class ApiBaseHelper {
     try {
       final response = await baseAPI.post(url, data: data);
       resData = _returnResponse(response);
+<<<<<<< HEAD
     } on SocketException {
       throw Exception('No Internet connection');
+=======
+    } on DioError catch (e) {
+      print(e.message);
+>>>>>>> d11398eb6b0e53dd69d06a294103fd692515a427
     }
     return resData;
   }
@@ -64,8 +74,13 @@ class ApiBaseHelper {
     try {
       final response = await baseAPI.put(url, data: data);
       resData = _returnResponse(response);
+<<<<<<< HEAD
     } on SocketException {
       throw Exception('No Internet connection');
+=======
+    } on DioError catch (e) {
+      print(e.message);
+>>>>>>> d11398eb6b0e53dd69d06a294103fd692515a427
     }
     return resData;
   }
@@ -75,8 +90,13 @@ class ApiBaseHelper {
     try {
       final response = await baseAPI.delete(url);
       resData = _returnResponse(response);
+<<<<<<< HEAD
     } on SocketException {
       throw Exception('No Internet connection');
+=======
+    } on DioError catch (e) {
+      print(e.message);
+>>>>>>> d11398eb6b0e53dd69d06a294103fd692515a427
     }
     return resData;
   }
