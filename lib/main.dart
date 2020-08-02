@@ -27,40 +27,17 @@ Future<bool> initHive() async {
   await Hive.openBox('user');
   await Hive.openBox('notification_dams');
   await Hive.openBox('chart_dams');
-<<<<<<< HEAD
-  await Hive.openBox('iot_dam');
-=======
->>>>>>> d11398eb6b0e53dd69d06a294103fd692515a427
   await Hive.openBox('peers');
   bool registered = Hive.box('user').containsKey('id');
   return registered;
 }
 
-<<<<<<< HEAD
-class SIHNotifier extends StatelessWidget {
-=======
 class SIHNotifier extends StatefulWidget {
->>>>>>> d11398eb6b0e53dd69d06a294103fd692515a427
   final bool registered;
 
   SIHNotifier({this.registered});
 
   @override
-<<<<<<< HEAD
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.light,
-        fontFamily: 'Roboto',
-        backgroundColor: kBlue,
-        primaryColor: kBlue,
-        accentColor: kBlue,
-      ),
-      title: 'JalPravah',
-      home: registered ? Home() : Authentication(),
-      // home: NearbyService(),
-=======
   _SIHNotifierState createState() => _SIHNotifierState();
 }
 
@@ -242,7 +219,6 @@ class _SIHNotifierState extends State<SIHNotifier> {
         home: widget.registered ? Home() : Authentication(),
         // home: NearbyService(),
       ),
->>>>>>> d11398eb6b0e53dd69d06a294103fd692515a427
     );
   }
 }
