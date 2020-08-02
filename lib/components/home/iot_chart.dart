@@ -10,9 +10,7 @@ import '../../models/index.dart';
 import '../../utils/constants.dart';
 
 class IOTChart extends StatefulWidget {
-  final ValueKey key;
-
-  IOTChart({this.key});
+  IOTChart();
 
   @override
   _IOTChartState createState() => _IOTChartState();
@@ -32,8 +30,8 @@ class _IOTChartState extends State<IOTChart> {
     channel.bind('iot', (data) {
       print(data);
     });
-    var iotValues = await iotPusher.fetchIOTInfo();
-    List<ValueIOT> waterData = iotValues;
+    IOTValues iotValues = await iotPusher.fetchIOTInfo();
+    List<ValueIOT> waterData = iotValues.getWaterValues;
     var initial = [
       charts.Series<ValueIOT, DateTime>(
         id: 'Current',
@@ -51,6 +49,7 @@ class _IOTChartState extends State<IOTChart> {
   @override
   void initState() {
     super.initState();
+    initChart();
   }
 
   @override
@@ -93,7 +92,7 @@ class _IOTChartState extends State<IOTChart> {
                     _chartData,
                     behaviors: [
                       charts.SlidingViewport(),
-                      charts.PanAndZoomBehavior(),
+                      //charts.PanAndZoomBehavior(),
                       charts.SeriesLegend(
                         entryTextStyle: charts.TextStyleSpec(
                             color: charts.MaterialPalette.white),
@@ -101,6 +100,7 @@ class _IOTChartState extends State<IOTChart> {
                     ],
                     animate: true,
                     primaryMeasureAxis: charts.NumericAxisSpec(
+                      viewport: charts.NumericExtents(0, 25),
                       renderSpec: charts.GridlineRendererSpec(
                         // Tick and Label styling here.
                         labelStyle: charts.TextStyleSpec(
@@ -111,15 +111,17 @@ class _IOTChartState extends State<IOTChart> {
                             color: charts.MaterialPalette.white),
                       ),
                       tickProviderSpec:
-                          charts.BasicNumericTickProviderSpec(zeroBound: false),
+                          charts.BasicNumericTickProviderSpec(zeroBound: true),
                     ),
                     domainAxis: DateTimeAxisSpecWorkaround(
+                      tickProviderSpec:
+                          charts.DayTickProviderSpec(increments: [2]),
                       viewport: charts.DateTimeExtents(
                         start: DateTime.now().subtract(
-                          Duration(days: 3),
+                          Duration(hours: 2),
                         ),
                         end: DateTime.now().add(
-                          Duration(days: 3),
+                          Duration(minutes: 1),
                         ),
                       ),
                       renderSpec: charts.SmallTickRendererSpec(

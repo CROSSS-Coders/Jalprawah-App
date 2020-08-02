@@ -9,30 +9,23 @@ class ValueIOT {
 }
 
 class IOTValues {
-  final List<ValueIOT> forecastSeries;
   final List<ValueIOT> waterSeries;
-  final int damID;
 
-  IOTValues({this.damID, this.forecastSeries, this.waterSeries});
+  IOTValues({this.waterSeries});
 
-  List<ValueIOT> get getForecastValues => forecastSeries;
   List<ValueIOT> get getWaterValues => waterSeries;
 
-  factory IOTValues.fromJson(damID, Map<String, dynamic> json) {
-    List<ValueIOT> forecastValues = [];
+  factory IOTValues.fromJson(Map<String, dynamic> json) {
     List<ValueIOT> waterValues = [];
-    for (dynamic forecast in json['forecast']) {
-      forecastValues.add(ValueIOT(
-          value: forecast['water_level'],
-          time: DateTime.parse(forecast['created_at'])));
-    }
     for (dynamic value in json['values']) {
-      waterValues.add(ValueIOT(
-          value: value['value'], time: DateTime.parse(value['datatime'])));
+      waterValues.add(
+        ValueIOT(
+          value: value['water_level'],
+          time: DateTime.parse(value['created_at']),
+        ),
+      );
     }
     return IOTValues(
-      damID: damID,
-      forecastSeries: forecastValues,
       waterSeries: waterValues,
     );
   }

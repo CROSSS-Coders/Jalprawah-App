@@ -1,6 +1,5 @@
-import 'dart:math';
 import 'dart:typed_data';
-
+import 'package:random_string/random_string.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,7 +42,7 @@ class SIHNotifier extends StatefulWidget {
 
 class _SIHNotifierState extends State<SIHNotifier> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  final String userID = Random().nextInt(10000).toString();
+  final String userID = randomAlpha(5);
   final Strategy strategy = Strategy.P2P_CLUSTER;
   Box peers = Hive.box('peers');
 
@@ -101,6 +100,7 @@ class _SIHNotifierState extends State<SIHNotifier> {
             if (status == Status.CONNECTED) {
               peers.put(id, id);
               print('$userID: Connected to $id');
+              Nearby().stopDiscovery();
             }
           },
           onDisconnected: (id) {

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_pusher/pusher.dart';
 
+import '../models/iot.dart';
 import '../utils/api.dart';
 
 class IOTPusher {
@@ -26,7 +27,6 @@ class IOTPusher {
   Future<dynamic> fetchIOTInfo() async {
     Response response = await api.get('/iot');
     var data = response.data;
-    print(data);
-    return data;
+    return IOTValues.fromJson(data);
   }
 }
