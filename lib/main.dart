@@ -122,21 +122,19 @@ class _SIHNotifierState extends State<SIHNotifier> {
       id,
       onPayLoadRecieved: (endid, payload) async {
         String str = String.fromCharCodes(payload.bytes);
-        if (str == 'WARNING') {
-          showSimpleNotification(
-            Text('WARNING'),
-            background: kRed,
-            contentPadding: EdgeInsets.all(5),
-            elevation: 5,
-            subtitle: Text('Possible flood in your area'),
-          );
-        }
+        showSimpleNotification(
+          Text(str),
+          background: kRed,
+          contentPadding: EdgeInsets.all(5),
+          elevation: 5,
+          subtitle: Text('Possible flood in your area'),
+        );
       },
     );
   }
 
   void _sendData() async {
-    String warning = 'WARNING';
+    String warning = 'NEARBY WARNING';
     for (var peer in peers.values) {
       Nearby().sendBytesPayload(peer, Uint8List.fromList(warning.codeUnits));
     }
