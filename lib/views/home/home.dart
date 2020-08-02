@@ -82,6 +82,7 @@ class _HomeState extends State<Home> {
         removeDamCallback: removeDam,
       ));
     }
+    setState(() {});
   }
 
   void removeDam(ChartCard child) {
