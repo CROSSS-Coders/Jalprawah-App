@@ -1,4 +1,8 @@
-# JalPravah - CROSSS Coders
+# JalPravah(web app)(LN397 CROSS_Coders)
+
+###### One Solution For All Dams
+
+<img height="80px" width="300px" src="https://github.com/CROSSS-Coders/LN379_CROSSSCoders-App/raw/master/assets/logo.png">
 
 ![JalPravah](./assets/logo.png)
 
