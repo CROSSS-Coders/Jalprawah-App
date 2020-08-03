@@ -7,6 +7,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'utils/constants.dart';
 import 'views/home/home.dart';
@@ -42,6 +43,8 @@ class SIHNotifier extends StatefulWidget {
 
 class _SIHNotifierState extends State<SIHNotifier> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
   final String userID = randomAlpha(5);
   final Strategy strategy = Strategy.P2P_CLUSTER;
   Box peers = Hive.box('peers');
@@ -128,19 +131,34 @@ class _SIHNotifierState extends State<SIHNotifier> {
   }
 
   void acceptConnection(id) async {
-    Nearby().acceptConnection(
-      id,
-      onPayLoadRecieved: (endid, payload) async {
-        String str = String.fromCharCodes(payload.bytes);
-        showSimpleNotification(
-          Text(str),
-          background: kRed,
-          contentPadding: EdgeInsets.all(5),
-          elevation: 5,
-          subtitle: Text('Possible flood in your area'),
-        );
-      },
-    );
+    Nearby().acceptConnection(id, onPayLoadRecieved: (endid, payload) async {
+      String str = String.fromCharCodes(payload.bytes);
+      // var android = AndroidNotificationDetails('id', 'channel', 'description',
+      //     priority: Priority.High, importance: Importance.Max);
+      // var iOS = IOSNotificationDetails();
+      // var platform = new NotificationDetails(android, iOS);
+      // await flutterLocalNotificationsPlugin.show(
+      //   0,
+      //   'WARNING',
+      //   'Possible Flooding in your Area',
+      //   platform,
+      // );
+      showSimpleNotification(
+        Text(str),
+        background: kRed,
+        contentPadding: EdgeInsets.all(5),
+        elevation: 5,
+        subtitle: Text('Possible flood in your area'),
+      );
+    }, onPayloadTransferUpdate: (id, payloadTransferUpdate) async {
+      // showSimpleNotification(
+      //   Text('NEARBY WARNING'),
+      //   background: kRed,
+      //   contentPadding: EdgeInsets.all(5),
+      //   elevation: 5,
+      //   subtitle: Text('Possible flood in your area'),
+      // );
+    });
   }
 
   void _sendData() async {
@@ -157,6 +175,15 @@ class _SIHNotifierState extends State<SIHNotifier> {
   @override
   void initState() {
     Nearby().askLocationAndExternalStoragePermission();
+    // var initializationSettingsAndroid =
+    //     AndroidInitializationSettings('ic_launcher');
+    // var initializationSettingsIOs = IOSInitializationSettings();
+    // var initSetttings = InitializationSettings(
+    //     initializationSettingsAndroid, initializationSettingsIOs);
+    // flutterLocalNotificationsPlugin.initialize(initSetttings,
+    //     onSelectNotification: (payload) async {
+    //   print(payload);
+    // });
     startAdvertising();
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
@@ -173,6 +200,7 @@ class _SIHNotifierState extends State<SIHNotifier> {
       onBackgroundMessage: backgroundMessageHandler,
       onLaunch: (Map<String, dynamic> message) async {
         print("onLaunch: " + message.toString());
+        _sendData();
         showSimpleNotification(
           Text(message['notification']['title']),
           background: kRed,
@@ -184,6 +212,7 @@ class _SIHNotifierState extends State<SIHNotifier> {
       },
       onResume: (Map<String, dynamic> message) async {
         print("onResume: " + message.toString());
+        _sendData();
         showSimpleNotification(
           Text(message['notification']['title']),
           background: kRed,
@@ -191,7 +220,6 @@ class _SIHNotifierState extends State<SIHNotifier> {
           elevation: 5,
           subtitle: Text(message['notification']['body']),
         );
-        _sendData();
       },
     );
     _firebaseMessaging.requestNotificationPermissions(

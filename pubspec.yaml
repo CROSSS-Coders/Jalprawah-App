@@ -20,6 +20,7 @@ dependencies:
   flutter_pusher: ^1.0.2
   overlay_support: ^1.0.5
   random_string: ^2.1.0
+  flutter_local_notifications: ^1.4.4+1
 
 dev_dependencies:
   hive_generator: ^0.7.0+2
