@@ -2,8 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
 
 class ApiBaseHelper {
-  static final String url =
-      'http://ec2-15-206-145-17.ap-south-1.compute.amazonaws.com';
+  static final String url = 'https://api.pushpak1300.me';
   static BaseOptions opts = BaseOptions(
     baseUrl: url,
     connectTimeout: 30000,
