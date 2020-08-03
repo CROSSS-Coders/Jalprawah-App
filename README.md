@@ -4,7 +4,6 @@
 
 <img height="80px" width="300px" src="https://github.com/CROSSS-Coders/LN379_CROSSSCoders-App/raw/master/assets/logo.png">
 
-![JalPravah](./assets/logo.png)
 
 ### Generate Hive Models
 
